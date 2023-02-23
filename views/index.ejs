@@ -18,9 +18,7 @@
     var canvas = new fabric.Canvas('cvs');
     window.onload = function(){
       const url = "https://president.ismcdn.jp/mwimgs/1/4/-/img_149103aac5cd1cce8775af6d59c20c63320198.jpg";
-      // canvas.setBackgroundImage("https://president.ismcdn.jp/mwimgs/1/4/-/img_149103aac5cd1cce8775af6d59c20c63320198.jpg",
-      // canvas.renderAll.bind(canvas)
-      // );
+
       fabric.Image.fromURL(url, e => {
         e.scaleToWidth(canvas.width);
         canvas.setBackgroundImage(e, () => {
@@ -38,7 +36,6 @@
       .add(new fabric.Circle({
           left: 150, top: 100, radius: 40, fill: 'royalblue'
       }));
-      console.log("hoge");
     }
 
     //要素を移動
@@ -51,7 +48,6 @@
     function mouseup(options) {
       if (options.target) {
         options.target.set({opacity: 1, scaleX: 1, scaleY: 1});
-        console.log(options.target.type);
         document.getElementById("samplelabel").innerText = options.target.type;
       }
     }
