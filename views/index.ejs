@@ -9,18 +9,28 @@
  
 <body>
   <h1>Fabric.jsのサンプル</h1>
+  <input type="file" id="file" /><br />
   <canvas id="cvs" width="400" height="240"></canvas>
   <input type="button" value="枠追加" onclick="btnClkNewRect()">
   <br>
   <textarea id="info">information</textarea>
+  <img id="thumb">
+  <div id="pics"></div>
+  <!-- <canvas id="out" width="200" height="200"></canvas> -->
  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
   <script>
+    const url = "https://president.ismcdn.jp/mwimgs/1/4/-/img_149103aac5cd1cce8775af6d59c20c63320198.jpg";      
     var canvas = new fabric.Canvas('cvs');
+    var img = new fabric.Image(url, {left:0, top:0});
+//    var out = document.getElementById('out');
 
     window.onload = function(){
       // 画像を画面幅いっぱいに表示
-      const url = "https://president.ismcdn.jp/mwimgs/1/4/-/img_149103aac5cd1cce8775af6d59c20c63320198.jpg";      
+      img.scaleX = canvas.width / img.width;
+      img.scaleY = canvas.height / img.height;
+      canvas.scaleY = img.height * img.scaleY;
+      canvas.setBackgroundImage(img, () => {canvas.renderAll.bind(canvas)});
       fabric.Image.fromURL(url, e => {
         e.scaleToWidth(canvas.width);
         canvas.setBackgroundImage(e, () => {
@@ -29,6 +39,31 @@
         });
       });
     }
+
+    // document.getElementById('file').addEventListener("change", function (e){
+    //   var file = e.target.files[0];
+    //   var reader = new FileReader();
+    //   reader.onload = function (f){
+    //     var data = f.target.result;
+    //     fabric.Image.fromURL(data, function (img){
+    //       img.scaleX = canvas.width / img.width;
+    //       img.scaleY = img.scaleX; //canvas.height / img.height;
+    //       canvas.scaleY = img.height * img.scaleY / canvas.height;
+    //       var oImg = img.set({left: 0, top: 0, angle: 0, width: img.width, height: img.height}).scale(img.scaleY);
+
+    //       canvas.setBackgroundImage(oImg, () => {
+    //         canvas.setDimensions({width: canvas.width, height: canvas.height*canvas.scaleY})
+    //         canvas.renderAll.bind(canvas);
+    //       });
+
+    //       // var oImg = img.set({left: 0, top: 0, angle: 0, width: img.width, height: img.height}).scale(img.scaleY);
+    //       // canvas.add(oImg).renderAll();
+    //       // var a = canvas.setActiveObject(oImg);
+    //       // var dataURL = canvas.toDataURL({ format: 'png', quality: 0.8});
+    //     });
+    //   };
+    //   reader.readAsDataURL(file);
+    // });
 
     // 枠追加
     function btnClkNewRect(){
@@ -42,6 +77,22 @@
     }
 
     canvas.on('mouse:up', function(options){
+      // 枠画像を取得
+      if(options.target){
+        var cropped = img.toDataURL({
+          left: options.target.left,
+          top: options.target.top,
+          width: options.target.width,
+          height: options.target.height
+        });
+        var imgtag = "<img src=" + cropped + ">";
+        document.getElementById("pics").innerHTML = imgtag;
+        // const ctx = out.getContext('2d');
+        // ctx.fillStyle = 'rgb(200, 200, 200)';
+        // ctx.fillRect(0, 0, out.width, out.height);
+        // ctx.drawImage( img, 0, 0, )
+      }
+
       // 枠情報一覧を表示
       let objs = canvas.getObjects();
       document.getElementById("info").value = "";
