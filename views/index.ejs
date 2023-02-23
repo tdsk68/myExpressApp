@@ -57,12 +57,11 @@
     canvas.on('mouse:up', function(options){
       // 枠画像を取得
       if(options.target){
-        var cropped = img.toDataURL({
+        var cropped = canvas.toDataURL({
           left: options.target.left,
           top: options.target.top,
           width: options.target.width,
-          height: options.target.height,
-          fill: 'rgba(0, 0, 0, 1)'
+          height: options.target.height
         });
         var imgtag = "<img src=" + cropped + ">";
         document.getElementById("pics").innerHTML = imgtag;
