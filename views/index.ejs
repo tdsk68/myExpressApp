@@ -10,15 +10,17 @@
 <body>
   <h1>Fabric.jsのサンプル</h1>
   <canvas id="cvs" width="400" height="240"></canvas>
-  <p>type = <output id="res"></output></p>
-  <label id="samplelabel">ラベル</label>
+  <input type="button" value="枠追加" onclick="btnClkNewRect()">
+  <br>
+  <textarea id="info">information</textarea>
  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
   <script>
     var canvas = new fabric.Canvas('cvs');
-    window.onload = function(){
-      const url = "https://president.ismcdn.jp/mwimgs/1/4/-/img_149103aac5cd1cce8775af6d59c20c63320198.jpg";
 
+    window.onload = function(){
+      // 画像を画面幅いっぱいに表示
+      const url = "https://president.ismcdn.jp/mwimgs/1/4/-/img_149103aac5cd1cce8775af6d59c20c63320198.jpg";      
       fabric.Image.fromURL(url, e => {
         e.scaleToWidth(canvas.width);
         canvas.setBackgroundImage(e, () => {
@@ -26,38 +28,32 @@
           canvas.renderAll.bind(canvas);
         });
       });
-
-
-
-      //四角
-      canvas.add(new fabric.Rect({
-          left: 80, top: 80, width: 120, height: 80, fill: 'orangered'
-      }))
-      .add(new fabric.Circle({
-          left: 150, top: 100, radius: 40, fill: 'royalblue'
-      }));
     }
 
-    //要素を移動
-    function objectmoving(options) {
-      if (options.target) {
-        options.target.set({opacity: .5, scaleX: 1.3, scaleY: 1.3});
+    // 枠追加
+    function btnClkNewRect(){
+      let rect = new fabric.Rect({
+        left: 80, top: 80, width: 120, height: 80,
+        fill: 'rgba(0, 0, 0, 0)',
+        stroke: 'rgba(0, 0, 0, 1)',
+        strokeWidth: 4
+      });
+      canvas.add(rect);
+    }
+
+    canvas.on('mouse:up', function(options){
+      // 枠情報一覧を表示
+      let objs = canvas.getObjects();
+      document.getElementById("info").value = "";
+      for(i = 0; i<objs.length; i++){
+        let rect = canvas.item(i);
+        document.getElementById("info").value = 
+          document.getElementById("info").value
+          + Math.round(rect.top) + " " + Math.round(rect.left) + " " 
+          + Math.round(rect.width*rect.scaleX) + " " + Math.round(rect.height*rect.scaleY) + "\n";
       }
-    }
-    //要素を離す
-    function mouseup(options) {
-      if (options.target) {
-        options.target.set({opacity: 1, scaleX: 1, scaleY: 1});
-        document.getElementById("samplelabel").innerText = options.target.type;
-      }
-    }
-    
-    //関連付け
-    canvas.on({
-      'object:moving': objectmoving,
-      'mouse:up': mouseup
+
     });
-
   </script>
 </body>
 </html>
