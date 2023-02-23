@@ -1,11 +1,67 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+<html lang="ja">
+ 
+<head>
+  <meta charset="UTF-8">
+  <title>Fabric.jsのサンプル <%= title %></title>
+  <style>#cvs {border: 1px solid gray;}</style>
+</head>
+ 
+<body>
+  <h1>Fabric.jsのサンプル</h1>
+  <canvas id="cvs" width="400" height="240"></canvas>
+  <p>type = <output id="res"></output></p>
+  <label id="samplelabel">ラベル</label>
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+  <script>
+    var canvas = new fabric.Canvas('cvs');
+    window.onload = function(){
+      const url = "https://president.ismcdn.jp/mwimgs/1/4/-/img_149103aac5cd1cce8775af6d59c20c63320198.jpg";
+      // canvas.setBackgroundImage("https://president.ismcdn.jp/mwimgs/1/4/-/img_149103aac5cd1cce8775af6d59c20c63320198.jpg",
+      // canvas.renderAll.bind(canvas)
+      // );
+      fabric.Image.fromURL(url, e => {
+        e.scaleToWidth(canvas.width);
+        canvas.setBackgroundImage(e, () => {
+          canvas.setDimensions({width: canvas.width, height: e.height*e.scaleY})
+          canvas.renderAll.bind(canvas);
+        });
+      });
+
+
+
+      //四角
+      canvas.add(new fabric.Rect({
+          left: 80, top: 80, width: 120, height: 80, fill: 'orangered'
+      }))
+      .add(new fabric.Circle({
+          left: 150, top: 100, radius: 40, fill: 'royalblue'
+      }));
+      console.log("hoge");
+    }
+
+    //要素を移動
+    function objectmoving(options) {
+      if (options.target) {
+        options.target.set({opacity: .5, scaleX: 1.3, scaleY: 1.3});
+      }
+    }
+    //要素を離す
+    function mouseup(options) {
+      if (options.target) {
+        options.target.set({opacity: 1, scaleX: 1, scaleY: 1});
+        console.log(options.target.type);
+        document.getElementById("samplelabel").innerText = options.target.type;
+      }
+    }
+    
+    //関連付け
+    canvas.on({
+      'object:moving': objectmoving,
+      'mouse:up': mouseup
+    });
+
+  </script>
+</body>
 </html>
