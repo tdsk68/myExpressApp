@@ -58,18 +58,15 @@
     canvas.on('mouse:up', function(options){
       // 枠画像を取得
       if(options.target){
-
         fabric.Image.fromURL(org_img.toDataURL(), function (img){
-          console.log(options.target.left);
-          var oImg = img.set({
+          var oImg = img.toDataURL({
             left: options.target.left,
             top: options.target.top,
-            width: options.target.width,
-            height: options.target.height
-          }).scale(1);
-          document.getElementById("imgpic").src = oImg.toDataURL();
+            width: options.target.width*options.target.scaleX,
+            height: options.target.height*options.target.scaleY
+          });
+          document.getElementById("imgpic").src = oImg;
         });
-
       }
 
       // 枠情報一覧を表示
