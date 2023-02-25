@@ -14,15 +14,25 @@
   <input type="button" value="枠追加" onclick="btnClkNewRect()">
   <br>
   <textarea id="info">information</textarea>
-  <div>
-    <img id="imgpic"/>
+  <div id="detail_crop">
+    <img id="img_crop"/>
+    <input type="text" id="class_name" oninput="txtInput()">
+    <input type="button" value="枠削除" onclick="btnClkDeleteRect()">
   </div>
  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
   <script>
     var canvas = new fabric.Canvas('cvs');
     var org_img;
+    var labels = [];
+
+    // 画面ロードの操作
+    window.onload = function (){
+      // 切り出し枠の情報をクリア
+      switchDetailCrop("none");
+    }
  
+    // 画像ファイルの読み込み
     document.getElementById('file').addEventListener("change", function (e){
       var file = e.target.files[0];
       var reader = new FileReader();
@@ -53,11 +63,39 @@
         strokeWidth: 4
       });
       canvas.add(rect);
+      labels.push("");
+      // 切り出し枠の情報をクリア
+      switchDetailCrop("none");
     }
 
+    // 枠削除
+    function btnClkDeleteRect(){
+      var rect = canvas.getActiveObject();
+      if(rect){
+        let i = canvas.getObjects().indexOf(rect);
+
+        canvas.remove(canvas.getActiveObject());
+        labels.splice(i,1);
+      }
+    }
+
+    // ラベル入力
+    function txtInput(){
+      var rect = canvas.getActiveObject();
+
+      if(rect){
+        let i = canvas.getObjects().indexOf(rect);
+        labels[i] = document.getElementById("class_name").value;
+      }
+    }
+
+    // クリック処理
     canvas.on('mouse:up', function(options){
-      // 枠画像を取得
       if(options.target){
+        // 切り出し枠の情報を表示
+        switchDetailCrop("block");
+
+        // 枠画像を切り出して表示
         fabric.Image.fromURL(org_img.toDataURL(), function (img){
           var oImg = img.toDataURL({
             left: options.target.left,
@@ -65,8 +103,12 @@
             width: options.target.width*options.target.scaleX,
             height: options.target.height*options.target.scaleY
           });
-          document.getElementById("imgpic").src = oImg;
+          document.getElementById("img_crop").src = oImg;
         });
+
+        // ラベル名を表示
+        let i = canvas.getObjects().indexOf(options.target);
+        document.getElementById("class_name").value = labels[i]
       }
 
       // 枠情報一覧を表示
@@ -81,6 +123,16 @@
       }
 
     });
+
+    // 選択解除
+    canvas.on('selection:cleared', function(options){
+      switchDetailCrop("none");
+    });
+
+    // 内部関数 ----------
+    function switchDetailCrop(flag){
+      document.getElementById("detail_crop").style.display = flag;
+    }
   </script>
 </body>
 </html>
