@@ -21,6 +21,11 @@
       <input type="file" id="file_inference" /><br />
       <canvas id="cvs_inference" width="400" height="240"></canvas>
       <input type="button" value="推論" onclick="btnClkInference()">
+      <br>
+      <div id="detail_crop_inference">
+        <img id="img_crop_inference"/>
+        <input type="text" id="class_name_inference" oninput="txtInput()">
+      </div>        
     </div>
  
     <div class="panel tab-B">

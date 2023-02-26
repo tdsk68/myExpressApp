@@ -1,7 +1,9 @@
 var canvas = new fabric.Canvas('cvs');
 var canvas_inference = new fabric.Canvas('cvs_inference');
 var org_img;
+var org_img_inference;
 var labels = [];
+var labels_inference = [];
 
 // 画面ロードの操作
 window.onload = function (){
@@ -38,6 +40,7 @@ document.getElementById('file_inference').addEventListener("change", function (e
   reader.onload = function (f){
     let data = f.target.result;
     fabric.Image.fromURL(data, function (img){
+      org_img_inference = img;
       img.scaleX = canvas_inference.width / img.width;
       img.scaleY = img.scaleX;
       canvas_inference.scaleY = img.height * img.scaleY / canvas_inference.height;
@@ -79,6 +82,37 @@ function btnClkDeleteRect(){
 
 // 推論実行
 function btnClkInference(){
+  labels_inference = [];
+  let rects = [
+    {
+      "x": 30,
+      "y": 20,
+      "w": 50,
+      "h": 50,
+      "label": "first"
+    },
+    {
+      "x": 50,
+      "y": 100,
+      "w": 50,
+      "h": 50,
+      "label": "second"
+    }
+  ];
+  for(i=0; i<rects.length; i++){
+    let rect = new fabric.Rect({
+      left: rects[i].x, top: rects[i].y, width: rects[i].w, height: rects[i].h,
+      fill: 'rgba(0, 0, 0, 0)',
+      stroke: 'rgba(0, 0, 0, 1)',
+      strokeWidth: 4
+    });
+    canvas_inference.add(rect);
+    labels_inference.push(rects[i].label);
+  }
+  let objs = canvas_inference.getObjects();
+  for(i=0; i<objs.length; i++){
+    canvas_inference.item(i).selectable = false;
+  }
 
 }
 
@@ -126,6 +160,30 @@ canvas.on('mouse:up', function(options){
   }
 
 });
+
+// クリック処理
+canvas_inference.on('mouse:up', function(options){
+  if(options.target){
+    //options.target.set({stroke: 'rgba(255, 0, 0, 1)'}).setCoords();
+
+    // 枠画像を切り出して表示
+    fabric.Image.fromURL(org_img_inference.toDataURL(), function (img){
+      let oImg = img.toDataURL({
+        left: options.target.left,
+        top: options.target.top,
+        width: options.target.width*options.target.scaleX,
+        height: options.target.height*options.target.scaleY
+      });
+      document.getElementById("img_crop_inference").src = oImg;
+    });
+
+    // ラベル名を表示
+    let i = canvas_inference.getObjects().indexOf(options.target);
+    document.getElementById("class_name_inference").value = labels_inference[i];
+  }
+});
+
+
 
 // 選択解除
 canvas.on('selection:cleared', function(options){
