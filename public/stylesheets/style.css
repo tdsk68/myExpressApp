@@ -20,12 +20,12 @@ a {
   text-align:center;
   cursor:pointer;
 }
-.panel-group{
+/* .panel-group{
   height:100px;
   border:solid 1px #CCC;
   border-top:none;
   background:#eee;
-}
+} */
 .panel{
   display:none;
 }
