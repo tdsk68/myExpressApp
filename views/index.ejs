@@ -5,21 +5,36 @@
   <meta charset="UTF-8">
   <title>Fabric.jsのサンプル <%= title %></title>
   <style>#cvs {border: 1px solid gray;}</style>
+  <link rel="stylesheet" href="/stylesheets/style.css" />
 </head>
  
 <body>
-  <h1>Fabric.jsのサンプル</h1>
-  <input type="file" id="file" /><br />
-  <canvas id="cvs" width="400" height="240"></canvas>
-  <input type="button" value="枠追加" onclick="btnClkNewRect()">
-  <br>
-  <textarea id="info">information</textarea>
-  <div id="detail_crop">
-    <img id="img_crop"/>
-    <input type="text" id="class_name" oninput="txtInput()">
-    <input type="button" value="枠削除" onclick="btnClkDeleteRect()">
+  <!--タブ-->
+  <ul class="tab-group">
+    <li class="tab tab-A is-active">推論</li>
+    <li class="tab tab-B">登録</li>
+  </ul>
+
+  <!--タブを切り替えて表示するコンテンツ-->
+  <div class="panel-group">
+    <div class="panel tab-A is-show">Content-A</div>
+    <div class="panel tab-B">
+      <h1>Fabric.jsのサンプル</h1>
+      <input type="file" id="file" /><br />
+      <canvas id="cvs" width="400" height="240"></canvas>
+      <input type="button" value="枠追加" onclick="btnClkNewRect()">
+      <br>
+      <textarea id="info">information</textarea>
+      <div id="detail_crop">
+        <img id="img_crop"/>
+        <input type="text" id="class_name" oninput="txtInput()">
+        <input type="button" value="枠削除" onclick="btnClkDeleteRect()">
+      </div>        
+    </div>
   </div>
- 
+
+
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
   <script>
     var canvas = new fabric.Canvas('cvs');
@@ -133,6 +148,26 @@
     function switchDetailCrop(flag){
       document.getElementById("detail_crop").style.display = flag;
     }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      // タブに対してクリックイベントを適用
+      const tabs = document.getElementsByClassName('tab');
+      for(let i = 0; i < tabs.length; i++) {
+        tabs[i].addEventListener('click', tabSwitch, false);
+      }
+
+      // タブをクリックすると実行する関数
+      function tabSwitch(){
+        // タブのclassの値を変更
+        document.getElementsByClassName('is-active')[0].classList.remove('is-active');
+        this.classList.add('is-active');
+        // コンテンツのclassの値を変更
+        document.getElementsByClassName('is-show')[0].classList.remove('is-show');
+        const arrayTabs = Array.prototype.slice.call(tabs);
+        const index = arrayTabs.indexOf(this);
+        document.getElementsByClassName('panel')[index].classList.add('is-show');
+      };
+    }, false);
   </script>
 </body>
 </html>
